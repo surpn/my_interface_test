@@ -1,8 +1,8 @@
 import socket
 import time
 import os
-
 import re
+import xeger
 
 
 def current_path(dpath=r"", mkdir=False):
@@ -56,9 +56,36 @@ def newest_file(loc):
 		# print(location + file)
 
 
+def random_chinese_characters(i=1):
+	"""随机中文汉字"""
+	s = ""
+	if i < 11:
+		s = xeger.xeger(u"[\\u4e00-\\u9fa5]{1}")
+
+	else:
+		j = i // 10
+		k = i % 10
+
+		while j > 0:
+			a = xeger.xeger(u"[\\u4e00-\\u9fa5]{10}")
+			s = s + a
+			j -= 1
+			if j == 0:
+				a = xeger.xeger(u"[\\u4e00-\\u9fa5]{}".format("{"+str(k)+"}"))
+				s = s + a
+	return s
+
+
 if __name__ == "__main__":
 	# print(timestamp())
 	# print(url2ip('surpn.iok.la'))
-	location = current_path("/result\log")
-	print(location)
+	# location = current_path("/result\log")
+	# print(location)
 	# current_path(location)
+	start = time.clock()
+
+	print(start)
+	print(random_chinese_characters(100))
+
+	elapsed = (time.clock() - start)
+	print("Time used:", elapsed)
