@@ -13,9 +13,12 @@ class Log(object):
 		self.logger = logging.getLogger(__name__)
 		# 设置日志路径.级别.格式化
 		self.logger.setLevel(logging.INFO)
+
 		self.log_file_path = logging.FileHandler(current_path(r"\result\log") + timestamp() + ".log")
+
 		formate = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 		self.log_file_path.setFormatter(formate)
+
 		self.logger.addHandler(self.log_file_path)
 
 	def get_logger(self):
