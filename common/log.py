@@ -15,8 +15,8 @@ class Log(object):
 		self.logger.setLevel(logging.INFO)
 		self.log_file_path = logging.FileHandler(current_path(r"\result\log") + timestamp() + ".log")
 		formate = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-		log_file_path.setFormatter(formate)
-		self.logger.addHandler(log_file_path)
+		self.log_file_path.setFormatter(formate)
+		self.logger.addHandler(self.log_file_path)
 
 	def get_logger(self):
 		"""
