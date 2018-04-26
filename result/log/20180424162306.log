@@ -1,0 +1,4 @@
+2018-04-24 16:23:06,335 - common.log - CRITICAL - 1
+2018-04-24 16:23:06,335 - common.log - ERROR - 2
+2018-04-24 16:23:06,335 - common.log - WARNING - 3
+2018-04-24 16:23:06,335 - common.log - INFO - 4

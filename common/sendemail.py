@@ -1,0 +1,81 @@
+import smtplib
+from email.header import Header
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from smtplib import SMTP
+
+from common.readConfig import Config
+from common.utils import current_path
+
+
+def sendemail(subject="", context="", image=None, mail_file=None):
+	"""
+	发送邮件
+	:param subject:邮件主题
+	:param context: 邮件正文
+	:param image: 邮件图片
+	:param mail_file: 邮件附件
+	:return:
+	"""
+	config = Config().email()
+	# 获取配置信息
+	smtp_server = config[0]
+	user = config[1]
+	password = config[2]
+	sender = config[3]
+	receiver = config[4]
+	# receiver = "422563052@qq.com,18260060909@163.com"
+	# print(type(receiver))
+
+	msg = MIMEMultipart('related')
+	# 主题.收发人
+	msg['Subject'] = Header(subject, 'utf-8')
+	msg['From'] = sender
+	msg['To'] = receiver
+
+	# 正文
+	msg.attach(MIMEText(context, 'plain', 'utf-8'))
+
+	# 添加图片
+	if image is not None:
+		msgAlternative = MIMEMultipart('alternative')
+		msg.attach(msgAlternative)
+
+		mail_msg = '<img src="cid:image1"><br>'
+		msgAlternative.attach(MIMEText(mail_msg, 'html', 'utf-8'))
+
+		# 指定图片为当前目录
+		with open(image, 'rb') as f:
+			msgimage = MIMEImage(f.read())
+
+		# 定义图片 ID，在 HTML 文本中引用
+		msgimage.add_header('Content-ID', '<image1>')
+		msg.attach(msgimage)
+
+	# 附件
+	if image is not None:
+		msg_file = MIMEText(mail_file, 'base64', 'utf-8')
+		msg_file['Content-Type'] = 'application/octet-stream'
+		msg_file['Content-Disposition'] = 'attachment; filename=test.html'
+		msg.attach(msg_file)
+
+	try:
+		# 发送
+		smtp = SMTP()
+		# 1.连接邮件服务器
+		smtp.connect(smtp_server)
+		# 2.登录
+		smtp.login(user, password)
+		# 3.发送邮件
+		smtp.sendmail(sender, receiver, msg.as_string())
+		# 4.退出
+		smtp.quit()
+		print("发送成功")
+	except Exception as e:
+		print(e)
+
+
+if __name__ == "__main__":
+	f = current_path() + '/test_case_data/test.png'
+	sendemail("邮件主题", "邮件正文")
