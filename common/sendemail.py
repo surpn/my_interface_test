@@ -46,8 +46,8 @@ def sendemail(subject="", context="", image=None, mail_file=None):
 		msgAlternative.attach(MIMEText(mail_msg, 'html', 'utf-8'))
 
 		# 指定图片为当前目录
-		with open(image, 'rb') as f:
-			msgimage = MIMEImage(f.read())
+		with open(image, 'rb') as ff:
+			msgimage = MIMEImage(ff.read())
 
 		# 定义图片 ID，在 HTML 文本中引用
 		msgimage.add_header('Content-ID', '<image1>')

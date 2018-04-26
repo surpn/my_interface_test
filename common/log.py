@@ -8,13 +8,21 @@ from common.utils import current_path, timestamp
 
 class Log(object):
 
-	def __init__(self):
+	log_path = current_path(r"\result\log")
+
+	def __init__(self, level="info"):
+
+		global log_path
+		# 创建日志文件夹
+		if not os.path.exists(log_path):
+			os.mkdir(log_path)
+
 		# 初始化
 		self.logger = logging.getLogger(__name__)
 		# 设置日志路径.级别.格式化
 		self.logger.setLevel(logging.INFO)
 
-		self.log_file_path = logging.FileHandler(current_path(r"\result\log") + timestamp() + ".log")
+		self.log_file_path = logging.FileHandler(log_path + timestamp() + ".log")
 
 		formate = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 		self.log_file_path.setFormatter(formate)

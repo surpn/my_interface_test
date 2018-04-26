@@ -14,7 +14,7 @@ def current_path(dpath=r"", mkdir=False):
 	dirs = re.split(r'\\|/', dpath)
 	if len(dirs) != 0:
 		for d in dirs:
-			print(d)
+			# print(d)
 			curr_path = os.path.join(curr_path, d)
 
 	curr_path = os.path.join(curr_path, "")
@@ -52,7 +52,7 @@ def newest_file(loc):
 	if len(files) != 0:
 		files.sort(key=lambda fn: os.path.getmtime(loc + fn))
 		file = files[-1]
-		return location + file
+		return loc + file
 		# print(location + file)
 
 
