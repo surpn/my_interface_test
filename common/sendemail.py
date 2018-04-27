@@ -57,7 +57,7 @@ def sendemail(subject="", context="", image=None, mail_file=None):
 	if image is not None:
 		msg_file = MIMEText(mail_file, 'base64', 'utf-8')
 		msg_file['Content-Type'] = 'application/octet-stream'
-		msg_file['Content-Disposition'] = 'attachment; filename=test.html'
+		msg_file['Content-Disposition'] = 'attachment; filename=' + mail_file
 		msg.attach(msg_file)
 
 	try:

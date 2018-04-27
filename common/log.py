@@ -108,10 +108,10 @@ class MyLog:
 
 
 if __name__ == '__main__':
-	log = MyLog.get_log()
+
 	# log.build_case_line("instruct", **{'status': 200, 'text': '-1531917099'})
 	# print(log.get_result_path())
 	# logger = log.get_logger()
-	log.logger.debug("test debug")
-	log.logger.info("test info")
+	# log.debug("test debug")
+	log().info("test info")
 

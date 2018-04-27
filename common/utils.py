@@ -5,6 +5,7 @@ import re
 import xeger
 
 
+
 def current_path(dpath=r"", mkdir=False):
 	"""获取文件夹路径"""
 	# 当前工作环境路径
@@ -14,7 +15,6 @@ def current_path(dpath=r"", mkdir=False):
 	dirs = re.split(r'\\|/', dpath)
 	if len(dirs) != 0:
 		for d in dirs:
-			# print(d)
 			curr_path = os.path.join(curr_path, d)
 
 	curr_path = os.path.join(curr_path, "")
@@ -48,10 +48,14 @@ def url2ip(url):
 
 def newest_file(loc):
 	"""文件夹中最新的文件"""
-	files = os.listdir(loc)
-	if len(files) != 0:
-		files.sort(key=lambda fn: os.path.getmtime(loc + fn))
+	path = current_path(loc)
+	files = os.listdir(path)
+	if len(files) == 0:
+		log().info(u"当前文件夹没有文件")
+	else:
+		files.sort(key=lambda fn: os.path.getmtime(path + fn))
 		file = files[-1]
+		log().info(u"最新文件是文件: " + file)
 		return loc + file
 		# print(location + file)
 
