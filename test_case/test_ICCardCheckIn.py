@@ -1,32 +1,29 @@
-import pprint
+# -*- coding:utf-8 -*-
 import unittest
 
-import requests
-
-from interface_test.common.urls import url
+from common.baseTest import BaseTest
 
 
-class TestICCardCheckIn(unittest.TestCase):
-
-	def setUp(self):
-
-		self.test_url = url("test")
-		self.method = "/ICCardCheckIn"
-		self.s = requests.session()
-		self.s.post(self.test_url + "/InitSystem")
-		self.data = {
-
-			"cardNo": 1001
-		}
-
-	def tearDown(self):
-		self.s.close()
+class TestICCardCheckIn(BaseTest):
+	"""校验IC卡的有效性"""
 
 	def test_ICCardCheckIn01(self):
+		"""输入{"cardNo":1001}"""
+		r = self.s.post(url=self.url, json=self.json)
+		self.log.info(r.text)
+		self.assertEqual(u'{"expectResult":"0","expectSysMessage":"插卡成功！"}', r.text, "123")
 
-		u = self.test_url + self.method
-		json = self.data
-		r = self.s.post(url=u, json=json)
-		r_data = r.text
-		pprint.pprint(r.text)
-		self.assertEqual('{"expectResult":"0","expectSysMessage":"插卡成功！"}', r_data, "123")
+	def test_ICCardCheckIn02(self):
+		"""输入{"cardNo":1000}"""
+		r = self.s.post(url=self.url, json=self.json)
+		self.log.info(r.text)
+		self.assertEqual(u'{"expectResult":"0","expectSysMessage":"插卡成功！"}', r.text, "123")
+
+
+if __name__ == "__main__":
+	# unittest.main()
+	suite = unittest.TestSuite()
+	suite.addTest(TestICCardCheckIn('test_ICCardCheckIn01'))
+	# 执行测试
+	runner = unittest.TextTestRunner()
+	runner.run(suite)
