@@ -9,6 +9,9 @@ class TestICCardCheckIn(BaseTest):
 
 	def test_ICCardCheckIn01(self):
 		"""输入{"cardNo":1001}"""
+		self.json = {
+			"cardNo": 1001
+		}
 		r = self.s.post(url=self.url, json=self.json)
 		self.log.info(r.text)
 		self.assertEqual(u'{"expectResult":"0","expectSysMessage":"插卡成功！"}', r.text, "123")

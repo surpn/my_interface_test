@@ -8,11 +8,10 @@ from common.utils import current_path, timestamp
 
 class Log(object):
 
-	global log_path
 	log_path = current_path(r"\result\log")
 
 	def __init__(self):
-
+		global log_path
 		# 创建日志文件夹
 		if not os.path.exists(log_path):
 			os.mkdir(log_path)

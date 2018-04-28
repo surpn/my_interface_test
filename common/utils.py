@@ -5,7 +5,6 @@ import re
 import xeger
 
 
-
 def current_path(dpath=r"", mkdir=False):
 	"""获取文件夹路径"""
 	# 当前工作环境路径
@@ -51,11 +50,12 @@ def newest_file(loc):
 	path = current_path(loc)
 	files = os.listdir(path)
 	if len(files) == 0:
-		log().info(u"当前文件夹没有文件")
+		pass
+		# log().info(u"当前文件夹没有文件")
 	else:
 		files.sort(key=lambda fn: os.path.getmtime(path + fn))
 		file = files[-1]
-		log().info(u"最新文件是文件: " + file)
+		# log().info(u"最新文件是文件: " + file)
 		return loc + file
 		# print(location + file)
 

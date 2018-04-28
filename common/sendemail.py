@@ -5,6 +5,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTP
 
+import os
+
 from common.readConfig import Config
 from common.utils import current_path
 
@@ -54,10 +56,10 @@ def sendemail(subject="", context="", image=None, mail_file=None):
 		msg.attach(msgimage)
 
 	# 附件
-	if image is not None:
-		msg_file = MIMEText(mail_file, 'base64', 'utf-8')
+	if mail_file is not None and os.path.exists(mail_file):
+		msg_file = MIMEText(open(mail_file, 'rb').read(), 'base64', 'utf-8')
 		msg_file['Content-Type'] = 'application/octet-stream'
-		msg_file['Content-Disposition'] = 'attachment; filename=' + mail_file
+		msg_file['Content-Disposition'] = 'attachment; filename=test_report.html'
 		msg.attach(msg_file)
 
 	try:

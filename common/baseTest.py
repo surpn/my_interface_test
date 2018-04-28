@@ -17,10 +17,7 @@ class BaseTest(unittest.TestCase):
 		self.s = requests.session()
 		r = self.s.post("http://localhost:9090/iccard/InitSystem")
 		self.log.info(r.text)
-		self.json = {
 
-			"cardNo": 1001
-		}
 		self.log.info(u"setUp success")
 
 	def tearDown(self):
