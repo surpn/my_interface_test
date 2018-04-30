@@ -1,8 +1,8 @@
 import pymysql.cursors
-from interface_test.common.readConfig import Config
+from common.readConfig import Config
 
 # ======== Reading db.ini setting ===========
-config = Config().test_db()
+config = Config().db()
 host = config[0]
 port = config[1]
 db = config[2]
