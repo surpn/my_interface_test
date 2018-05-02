@@ -3,38 +3,52 @@ import os
 import threading
 
 from common.readConfig import Config
-from common.utils import current_path, timestamp
+from common.utils import timestamp, current_path
 
 
 class Logging(object):
-
-	log_path = current_path(r"\logs")
-	config = Config().logging()
-	print(config)
-	output_format = config[0]
+	# logging 配置文件
+	__config = Config().logging()
+	__output_format = __config["output_format"]
+	__dir = __config["dir"]
+	__log_path = current_path(__dir)
 	__logger = None
 
 	def __init__(self):
-		global log_path, output_format, __logger
 		# 创建日志文件夹
-		if not os.path.exists(log_path):
-			os.mkdir(log_path)
+		if not os.path.exists(self.__log_path):
+			os.mkdir(self.__log_path)
 
 		# 初始化
-		__logger = logging.getLogger(__name__)
-		__logger.setLevel(logging.INFO)
+		self.__logger = logging.getLogger(__name__)
+		self.__logger.setLevel(logging.DEBUG)
 
-		# 设置输出日志 级别.路径.格式化
-		handler = logging.FileHandler(filename=log_path + timestamp() + ".log", encoding='utf-8')
-		formatter = logging.Formatter(output_format)
+		# 设置log输出日志 级别.路径.格式化
+		handler = logging.FileHandler(filename=self.__log_path + timestamp() + ".log", encoding='utf-8')
+		formatter = logging.Formatter(self.__output_format)
 		handler.setFormatter(formatter)
 
-		# 设置显示日志 级别.路径.格式化
+		# 设置控制台日志 级别.路径.格式化
 		console = logging.StreamHandler()
 		console.setLevel(logging.INFO)
 
-		__logger.addHandler(handler)
-		__logger.addHandler(console)
+		self.__logger.addHandler(handler)
+		self.__logger.addHandler(console)
+
+	def debug(self, msg, *args, **kwargs):
+		self.__logger.debug(msg, *args, **kwargs)
+
+	def info(self, msg, *args, **kwargs):
+		self.__logger.info(msg, *args, **kwargs)
+
+	def warning(self, msg, *args, **kwargs):
+		self.__logger.warning(msg, *args, **kwargs)
+
+	def error(self, msg, *args, **kwargs):
+		self.__logger.error(msg, *args, **kwargs)
+
+
+
 
 	@staticmethod
 	def get_logger(self):
@@ -97,7 +111,6 @@ class Logging(object):
 
 
 class Log(object):
-
 	log = None
 	mutex = threading.Lock()
 
@@ -108,10 +121,13 @@ class Log(object):
 			Log.mutex.release()
 
 	@staticmethod
-	def get_log():
+	def log():
 		return Log.log
 
 
 if __name__ == '__main__':
-	log = Log().get_log()
-	log.info("12")
+	log = Log().log()
+	log.debug("debug")
+	log.info("info")
+	log.warning("warning")
+	log.error("error")
