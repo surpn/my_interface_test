@@ -1,36 +1,52 @@
+# -*- coding: UTF-8 -*-
 import pymysql.cursors
 from common.readConfig import Config
 
 # ======== Reading db.ini setting ===========
-config = Config().db()
-host = config[0]
-port = config[1]
-db = config[2]
-user = config[3]
-password = config[4]
+config = Config().mysqldb()
+host = config["host"]
+port = int(config["port"])
+user = config["user"]
+password = config["password"]
+db = config["db"]
+charset = config["charset"]
+cursorclass = config["cursorclass"]
+if cursorclass == "dict":
+	cursorclass = pymysql.cursors.DictCursor
+if cursorclass == "tuple":
+	cursorclass = pymysql.cursors.Cursor
 
 
 # ======== MySql base operating ===================
 
-class DB:
+class MysqlDB(object):
+	# Connect to the database
 	def __init__(self):
 		try:
 
-			# Connect to the database
 			self.connection = pymysql.connect(
 
 				host=host,
+				port=port,
 				user=user,
 				password=password,
 				db=db,
-				charset='utf8mb4',
-				cursorclass=pymysql.cursors.DictCursor)
+				charset=charset,
+				cursorclass=cursorclass)
 
+			# print(config)
 		except pymysql.err.OperationalError as e:
 			print("Mysql Error %d: %s" % (e.args[0], e.args[1]))
 
-		# clear table data
+	# close database
+	def close(self):
+		self.connection.close()
 
+	# select sql statement
+	def select(self):
+		pass
+
+	# clear table data
 	def clear(self, table_name):
 		# real_sql = "truncate table " + table_name + ";"
 		real_sql = "delete from " + table_name + ";"
@@ -53,42 +69,17 @@ class DB:
 			cursor.execute(real_sql)
 			self.connection.commit()
 
-	# close database
-	def close(self):
-		self.connection.close()
-
 
 if __name__ == '__main__':
-
-	# db = DB()
-	# table_name = "sign_event"
-	# data = {'id':1,'name':'红米','`limit`':2000,'status':1,
-	# 'address':'北京会展中心','start_time':'2016-08-20 00:25:42'}
-	# table_name2 = "sign_guest"
-	# data2 = {'realname':'alen','phone':12312341234,'email':'alen@mail.com',
-	# 'sign':0,'event_id':1}
-	# db.clear(table_name)
-	# db.insert(table_name, data)
-	# db.close()
-
-	connection = pymysql.connect(host="surpn.iok.la", port=33066,user="root", password="123456", db="test")
+	conn = MysqlDB().connection
 	try:
-		# with connection.cursor() as cursor:
-		# 	# Create a new record
-		# 	sql = "INSERT INTO `users` (`email`, `password`) VALUES (%s, %s)"
-		# 	cursor.execute(sql, ('webmaster@python.org', 'very-secret'))
-		#
-		# # connection is not autocommit by default. So you must commit to save
-		# # your changes.
-		# connection.commit()
-
-		with connection.cursor() as cursor:
+		with conn.cursor() as cursor:
 			# Read a single record
 			sql = "SELECT `name`, `age` FROM `user`"
 			cursor.execute(sql)
+			# result = cursor.fetchone()
+			# print(result)
 			result = cursor.fetchall()
 			print(result)
 	finally:
-		connection.close()
-
-	print(host)
+		conn.close()

@@ -1,39 +1,48 @@
 import logging
-
 import os
 import threading
 
+from common.readConfig import Config
 from common.utils import current_path, timestamp
 
 
-class Log(object):
+class Logging(object):
 
-	log_path = current_path(r"\result\log")
+	log_path = current_path(r"\logs")
+	config = Config().logging()
+	print(config)
+	output_format = config[0]
+	__logger = None
 
 	def __init__(self):
-		global log_path
+		global log_path, output_format, __logger
 		# 创建日志文件夹
 		if not os.path.exists(log_path):
 			os.mkdir(log_path)
 
 		# 初始化
-		self.logger = logging.getLogger(__name__)
-		# 设置日志路径.级别.格式化
-		self.logger.setLevel(logging.INFO)
+		__logger = logging.getLogger(__name__)
+		__logger.setLevel(logging.INFO)
 
-		self.log_file_path = logging.FileHandler(filename=log_path + timestamp() + ".log", encoding='utf-8')
+		# 设置输出日志 级别.路径.格式化
+		handler = logging.FileHandler(filename=log_path + timestamp() + ".log", encoding='utf-8')
+		formatter = logging.Formatter(output_format)
+		handler.setFormatter(formatter)
 
-		formate = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-		self.log_file_path.setFormatter(formate)
+		# 设置显示日志 级别.路径.格式化
+		console = logging.StreamHandler()
+		console.setLevel(logging.INFO)
 
-		self.logger.addHandler(self.log_file_path)
+		__logger.addHandler(handler)
+		__logger.addHandler(console)
 
+	@staticmethod
 	def get_logger(self):
 		"""
 		get logger
 		:return:
 		"""
-		return self.logger
+		return Logging.__logger
 
 	def build_start_line(self, case_no):
 		"""
@@ -87,30 +96,22 @@ class Log(object):
 			self.logger.error(str(ex))
 
 
-class MyLog:
+class Log(object):
 
 	log = None
 	mutex = threading.Lock()
 
 	def __init__(self):
-		pass
+		if Log.log is None:
+			Log.mutex.acquire()
+			Log.log = Logging()
+			Log.mutex.release()
 
 	@staticmethod
 	def get_log():
-
-		if MyLog.log is None:
-			MyLog.mutex.acquire()
-			MyLog.log = Log()
-			MyLog.mutex.release()
-
-		return MyLog.log
+		return Log.log
 
 
 if __name__ == '__main__':
-
-	# log.build_case_line("instruct", **{'status': 200, 'text': '-1531917099'})
-	# print(log.get_result_path())
-	# logger = log.get_logger()
-	# log.debug("test debug")
-	log().info("test info")
-
+	log = Log().get_log()
+	log.info("12")

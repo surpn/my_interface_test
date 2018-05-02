@@ -1,48 +1,72 @@
+# _*_coding:utf-8_*_
 import os
 import configparser
 
-from common.utils import url2ip, current_path
+from common.utils import current_path
 
 
 class Config(object):
+	"""
+	read(filename)：读取ini文件中的内容
+	sections()：得到所有section，返回列表形式
+	[('key', 'value')]
+	options(section)：得到给定section的所有option
+	items(section):得到指定section的所有key-value
+	get(section,option)：得到section中的option值，返回str类型
+	get(section,option)：得到section中的option值，返回int类型
+	"""
 
 	def __init__(self):
 		# 本地文件夹路径
 		self.dir_path = current_path("config")
-		self.cf = configparser.ConfigParser()
+		if not os.path.exists(self.dir_path):
+			os.mkdir(self.dir_path)
 
-	def db(self):
-		file_path = self.dir_path + r"db.ini"
-		self.cf.read(file_path)
+	def get_ini(self, ini_filename):
+		file_path = self.dir_path + ini_filename
+		cf = configparser.ConfigParser(interpolation=None)
+		cf.read(file_path, encoding='UTF-8')
+		return cf
 
-		host = self.cf.get("sqlconf", "host")
-		ip = url2ip(host)
-		port = self.cf.get("sqlconf", "port")
-		db_name = self.cf.get("sqlconf", "db_name")
-		user = self.cf.get("sqlconf", "user")
-		password = self.cf.get("sqlconf", "password")
-		cfg = (ip, port, db_name, user, password)
+	def mysqldb(self):
+		cf = self.get_ini("db.ini")
+		items = cf.items("mysqlconf")
+		cfg = {}
+		for item in items:
+			cfg[item[0]] = item[1]
 		return cfg
 
-	def url(self, target_url="test"):
-		file_path = self.dir_path + r"url.ini"
-		self.cf.read(file_path)
-		url = self.cf.get("urls", target_url)
-		return url
+	def url(self):
+		cf = self.get_ini("url.ini")
+		items = cf.items("urls")
+		cfg = {}
+		for item in items:
+			cfg[item[0]] = item[1]
+		return cfg
 
 	def email(self):
-		file_path = self.dir_path + r"email.ini"
-		self.cf.read(file_path)
-		smtp_server = self.cf.get("email", "smtp_server")
-		user = self.cf.get("email", "user")
-		password = self.cf.get("email", "password")
-		sender = self.cf.get("email", "sender")
-		receiver = eval(self.cf.get("email", "receiver"))
-		cfg = (smtp_server, user, password, sender, receiver)
+		cf = self.get_ini("email.ini")
+		items = cf.items("email")
+		cfg = {}
+		for item in items:
+			cfg[item[0]] = item[1]
+		return cfg
+
+	def logging(self):
+		cf = self.get_ini("logging.ini")
+		items = cf.items("logging")
+		cfg = {}
+		for item in items:
+			cfg[item[0]] = item[1]
 		return cfg
 
 
 if __name__ == "__main__":
-
-	config = Config()
-	print(type(config.email()[4]))
+	config = Config().db()
+	print(config)
+	config = Config().url()
+	print(config)
+	config = Config().email()
+	print(config)
+	config = Config().logging()
+	print(config)

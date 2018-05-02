@@ -29,9 +29,14 @@ def current_path(dpath=r"", mkdir=False):
 			print("文件夹不存在")
 
 
-def timestamp():
+def timestamp(format_str=""):
 	"""时间戳"""
-	time_stamp = time.strftime("%Y%m%d%H%M%S")
+	time_stamp = ""
+
+	if format_str == "":
+		time_stamp = time.strftime("%Y%m%d%H%M%S")
+	else:
+		time_stamp = time.strftime(format_str)
 	return time_stamp
 
 
@@ -51,13 +56,10 @@ def newest_file(loc):
 	files = os.listdir(path)
 	if len(files) == 0:
 		pass
-		# log().info(u"当前文件夹没有文件")
 	else:
 		files.sort(key=lambda fn: os.path.getmtime(path + fn))
 		file = files[-1]
-		# log().info(u"最新文件是文件: " + file)
 		return loc + file
-		# print(location + file)
 
 
 def random_chinese_characters(i=1):
@@ -81,15 +83,12 @@ def random_chinese_characters(i=1):
 
 
 if __name__ == "__main__":
-	# print(timestamp())
-	# print(url2ip('surpn.iok.la'))
-	# location = current_path("/result\log")
-	# print(location)
-	# current_path(location)
-	start = time.clock()
-
-	print(start)
-	print(random_chinese_characters(100))
-
-	elapsed = (time.clock() - start)
-	print("Time used:", elapsed)
+	# start = time.clock()
+	#
+	# print(start)
+	# print(random_chinese_characters(100))
+	#
+	# elapsed = (time.clock() - start)
+	# print("Time used:", elapsed)
+	t = timestamp("%Y")
+	print(t)
