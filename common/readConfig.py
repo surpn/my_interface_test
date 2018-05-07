@@ -7,6 +7,7 @@ from common.utils import current_path
 
 class Config(object):
 	"""
+	获取配置 ini 文件
 	read(filename)：读取ini文件中的内容
 	sections()：得到所有section，返回列表形式
 	[('key', 'value')]
@@ -62,7 +63,7 @@ class Config(object):
 
 
 if __name__ == "__main__":
-	config = Config().db()
+	config = Config().mysqldb()
 	print(config)
 	config = Config().url()
 	print(config)

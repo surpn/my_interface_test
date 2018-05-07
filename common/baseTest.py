@@ -7,7 +7,9 @@ from common.readConfig import Config
 
 
 class BaseTest(unittest.TestCase):
-
+	"""
+	测试基类
+	"""
 	def setUp(self):
 		self.log = MyLog().get_log().logger
 		cfg = Config()

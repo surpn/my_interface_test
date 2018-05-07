@@ -6,6 +6,9 @@ from common.readConfig import Config
 
 
 class MysqlDB(object):
+	"""
+	MySQL配置
+	"""
 	# 读取配置文件
 	__config = Config().mysqldb()   # 配置文件
 	__host = __config["host"]   # 主机地址
@@ -83,7 +86,7 @@ class MysqlDB(object):
 if __name__ == '__main__':
 	conn = MysqlDB()
 	try:
-		result = conn.select()
+		result = conn.select_one()
 		print(result)
 	finally:
 		conn.close()

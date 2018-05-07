@@ -7,11 +7,28 @@ from common.utils import timestamp, current_path
 
 
 class Logging(object):
+	"""
+	日志输出配置
+	"""
 	# logging 配置文件
 	__config = Config().logging()
 	__output_format = __config["output_format"]
 	__dir = __config["dir"]
 	__log_path = current_path(__dir)
+	__handler = __config["handler"]
+	__console = __config["console"]
+	_nameToLevel = {
+		'CRITICAL': logging.CRITICAL,
+		'FATAL': logging.FATAL,
+		'ERROR': logging.ERROR,
+		'WARN': logging.WARNING,
+		'WARNING': logging.WARNING,
+		'INFO': logging.INFO,
+		'DEBUG': logging.DEBUG,
+		'NOTSET': logging.NOTSET,
+	}
+	__handler_level = _nameToLevel[__config["handler_level"]]
+	__console_level = _nameToLevel[__config["console_level"]]
 	__logger = None
 
 	def __init__(self):
@@ -24,16 +41,18 @@ class Logging(object):
 		self.__logger.setLevel(logging.DEBUG)
 
 		# 设置log输出日志 级别.路径.格式化
-		handler = logging.FileHandler(filename=self.__log_path + timestamp() + ".log", encoding='utf-8')
-		formatter = logging.Formatter(self.__output_format)
-		handler.setFormatter(formatter)
+		if self.__handler == "1":
+			handler = logging.FileHandler(filename=self.__log_path + timestamp() + ".log", encoding='utf-8')
+			handler.setLevel(self.__handler_level)
+			formatter = logging.Formatter(self.__output_format)
+			handler.setFormatter(formatter)
+			self.__logger.addHandler(handler)
 
 		# 设置控制台日志 级别.路径.格式化
-		console = logging.StreamHandler()
-		console.setLevel(logging.INFO)
-
-		self.__logger.addHandler(handler)
-		self.__logger.addHandler(console)
+		if self.__console == "1":
+			console = logging.StreamHandler()
+			console.setLevel(self.__console_level)
+			self.__logger.addHandler(console)
 
 	def debug(self, msg, *args, **kwargs):
 		self.__logger.debug(msg, *args, **kwargs)
@@ -47,30 +66,26 @@ class Logging(object):
 	def error(self, msg, *args, **kwargs):
 		self.__logger.error(msg, *args, **kwargs)
 
-
-
-
-	@staticmethod
 	def get_logger(self):
 		"""
 		get logger
 		:return:
 		"""
-		return Logging.__logger
+		return self.__logger
 
 	def build_start_line(self, case_no):
 		"""
 		write start line
 		:return:
 		"""
-		self.logger.info("--------" + case_no + " START--------")
+		self.__logger.info("--------" + case_no + " START--------")
 
 	def build_end_line(self, case_no):
 		"""
 		write end line
 		:return:
 		"""
-		self.logger.info("--------" + case_no + " END--------")
+		self.__logger.info("--------" + case_no + " END--------")
 
 	def build_case_line(self, case_name, **json):
 		"""
@@ -80,7 +95,7 @@ class Logging(object):
 		:param msg:
 		:return:
 		"""
-		self.logger.info(case_name + " - json:" + str(json))
+		self.__logger.info(case_name + " - json:" + str(json))
 
 	def get_report_path(self):
 		"""
@@ -88,41 +103,22 @@ class Logging(object):
 		:return:
 		"""
 		# report_path = os.path.join(self.log_file_path, "report.html")
-		return self.log_file_path
-
-	def get_result_path(self):
-		"""
-		get test result path
-		:return:
-		"""
-		return self.log_file_path
-
-	def write_result(self, result):
-		"""
-		:param result:
-		:return:
-		"""
-		result_path = os.path.join(self.log_file_path, "report.txt")
-		fb = open(result_path, "wb")
-		try:
-			fb.write(result)
-		except FileNotFoundError as ex:
-			self.logger.error(str(ex))
+		return self.__log_path
 
 
 class Log(object):
-	log = None
-	mutex = threading.Lock()
+	__log = None
+	__mutex = threading.Lock()
 
 	def __init__(self):
-		if Log.log is None:
-			Log.mutex.acquire()
-			Log.log = Logging()
-			Log.mutex.release()
+		if self.__log is None:
+			self.__mutex.acquire()
+			Log.__log = Logging()
+			self.__mutex.release()
 
 	@staticmethod
 	def log():
-		return Log.log
+		return Log.__log
 
 
 if __name__ == '__main__':
@@ -131,3 +127,4 @@ if __name__ == '__main__':
 	log.info("info")
 	log.warning("warning")
 	log.error("error")
+	print(log.get_logger())

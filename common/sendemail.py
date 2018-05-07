@@ -9,6 +9,7 @@ import os
 
 from common.readConfig import Config
 from common.utils import current_path
+from common.log import Log
 
 
 def sendemail(subject="", context="", image=None, mail_file=None):
@@ -20,16 +21,14 @@ def sendemail(subject="", context="", image=None, mail_file=None):
 	:param mail_file: 邮件附件
 	:return:
 	"""
-	config = Config().email()
+	__config = Config().email()
 	# 获取配置信息
-	smtp_server = config[0]
-	user = config[1]
-	password = config[2]
-	sender = config[3]
-	receiver = config[4]
-	# receiver = "422563052@qq.com,18260060909@163.com"
-	# print(type(receiver))
-
+	smtp_server = __config["smtp_server"]
+	user = __config["user"]
+	password = __config["password"]
+	sender = __config["sender"]
+	receiver = __config["receiver"]
+	__log = Log().log()
 	msg = MIMEMultipart('related')
 	# 主题.收发人
 	msg['Subject'] = Header(subject, 'utf-8')
@@ -73,9 +72,9 @@ def sendemail(subject="", context="", image=None, mail_file=None):
 		smtp.sendmail(sender, receiver, msg.as_string())
 		# 4.退出
 		smtp.quit()
-		print("发送成功")
+		__log.info("send email sessful")
 	except Exception as e:
-		print(e)
+		__log.error(e)
 
 
 if __name__ == "__main__":
